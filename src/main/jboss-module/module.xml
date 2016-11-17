@@ -1,0 +1,11 @@
+<module xmlns="urn:jboss:module:1.1" name="org.camunda.xstream">
+	<resources>
+		<resource-root path="camunda-xstream-0.0.1-SNAPSHOT.jar" />
+		<resource-root path="xstream-1.4.9.jar" />
+	</resources>
+	<dependencies>
+		<module name="org.camunda.bpm.camunda-engine" />
+		<module name="javax.xml.stream.api"/>
+		<module name="javax.api"/>
+	</dependencies>
+</module>

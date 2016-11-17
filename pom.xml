@@ -1,76 +1,114 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.camunda</groupId>
-  <artifactId>xstream</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name></name>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.camunda</groupId>
+	<artifactId>camunda-xstream</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name></name>
 
-  <properties>
-    <camunda.version>7.2.0</camunda.version>
-    <java.version>1.6</java.version>
-  </properties>
+	<properties>
+		<camunda.version>7.2.0</camunda.version>
+		<java.version>1.6</java.version>
+		<xstream.version></xstream.version>
+	</properties>
 
-  <scm>
-    <developerConnection>scm:git:https://github.com/RasPelikan/camunda-xstream.git</developerConnection>
-  </scm>
+	<scm>
+		<developerConnection>scm:git:https://github.com/RasPelikan/camunda-xstream.git</developerConnection>
+	</scm>
 
-  <dependencies>
+	<dependencies>
 
-    <!-- dependency entry also required in module.xml -->
-    <dependency>
-      <groupId>org.camunda.bpm</groupId>
-      <artifactId>camunda-engine</artifactId>
-      <version>${camunda.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<!-- dependency entry also required in module.xml -->
+		<dependency>
+			<groupId>org.camunda.bpm</groupId>
+			<artifactId>camunda-engine</artifactId>
+			<version>${camunda.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>[1.3.1,)</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <!-- Needed for InMemoryH2Test -->
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.3.168</version>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>1.10.19</version>
-      <scope>test</scope>
-    </dependency>
+		<!-- used for packaging the jboss module -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.9</version>
+			<scope>test</scope>
+		</dependency>
 
-  </dependencies>
+		<dependency>
+			<!-- Needed for InMemoryH2Test -->
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.168</version>
+			<scope>test</scope>
+		</dependency>
 
-  <build>
-    <pluginManagement>
-      <plugins>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.2</version>
-          <configuration>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-          </configuration>
-        </plugin>
+	</dependencies>
 
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.3</version>
-        </plugin>
+	<build>
+		<pluginManagement>
+			<plugins>
 
-      </plugins>
-    </pluginManagement>
-  </build>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.2</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/jboss-module/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>build-jboss-module</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
 
 </project>
 
