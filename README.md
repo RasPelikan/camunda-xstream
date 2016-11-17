@@ -32,8 +32,8 @@ XStream serialization might be used as shown in the [Camunda Documentation](http
 
 The plugin propperty "encoding" is optional (default: UTF-8) and specifies the encoding used for XML serialization.
 
-Examples of serialized values
------------------------------
+Serializing values
+------------------
 
 The plugin only serializes other values than
  * java.lang.Number and sub classes
@@ -43,6 +43,7 @@ The plugin only serializes other values than
 
 But you don't have to take care about this. Camunda itself chooses a proper serializer for these unsupported types.
 
+Example of a Variable holding a complex type:
 ```xml
 <com.best.Example id="1">
 <name>Best</name>
