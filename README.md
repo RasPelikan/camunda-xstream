@@ -43,7 +43,7 @@ The plugin only serializes other values than
 
 But you don't have to take care about this. Camunda itself chooses a proper serializer for these unsupported types.
 
-Example of a Variable holding a complex type:
+Example of the serialized value of a variable holding a complex type:
 ```xml
 <com.best.Example id="1">
 <name>Best</name>
