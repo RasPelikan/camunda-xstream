@@ -41,6 +41,8 @@ The plugin only serializes other values than
  * java.lang.Boolean
  * java.lang.Character
 
+But you don't have to take care about this. Camunda itself chooses a proper serializer for these unsupported types.
+
 ```xml
 <com.best.Example id="1">
 <name>Best</name>
