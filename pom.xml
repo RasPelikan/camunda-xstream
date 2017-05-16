@@ -4,7 +4,7 @@
 	<groupId>org.camunda</groupId>
 	<artifactId>camunda-xstream</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name></name>
+	<name>XStream Serializer for Camunda</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
