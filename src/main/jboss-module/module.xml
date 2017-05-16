@@ -1,7 +1,7 @@
 <module xmlns="urn:jboss:module:1.1" name="org.camunda.xstream">
 	<resources>
-		<resource-root path="camunda-xstream-0.0.1-SNAPSHOT.jar" />
-		<resource-root path="xstream-1.4.9.jar" />
+		<resource-root path="${project.build.finalName}.${project.packaging}" />
+		<resource-root path="xstream-${xstream.version}.jar" />
 	</resources>
 	<dependencies>
 		<module name="org.camunda.bpm.camunda-engine" />
