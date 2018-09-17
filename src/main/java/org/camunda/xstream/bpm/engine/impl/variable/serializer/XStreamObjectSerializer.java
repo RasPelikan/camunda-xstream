@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -40,8 +41,12 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
     @Override
     protected boolean canSerializeObject(final Object value) {
+    	
+    	// see https://docs.camunda.org/manual/7.8/user-guide/process-engine/variables/#supported-variable-values    	
         if (value == null) {
             return false;
+        } else if (value.getClass().isPrimitive()) {
+        	return false;
         } else if (value instanceof Number) {
             return false;
         } else if (value instanceof String) {
@@ -50,6 +55,8 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
             return false;
         } else if (value instanceof Character) {
             return false;
+        } else if (value instanceof Date) {
+        	return false;
         }
         return true;
 
