@@ -21,12 +21,16 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
     public static final String NAME = "xstream";
     public static final String DATAFORMAT = "application/xstream";
+    public static final String PROCESS_ANNOTATIONS = "processAnnotations";
 
     private final Charset charset;
+    
+    private final boolean processAnnotations;
 
-    public XStreamObjectSerializer(final String encoding) {
+    public XStreamObjectSerializer(final String encoding, final boolean processAnnotations) {
         super(DATAFORMAT);
         this.charset = Charset.forName(encoding);
+        this.processAnnotations = processAnnotations;
     }
 
     @Override
@@ -76,19 +80,34 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
     protected Object deserializeFromByteArray(final byte[] object, final String objectTypeName) throws Exception {
         final ByteArrayInputStream in = new ByteArrayInputStream(object);
         final InputStreamReader reader = new InputStreamReader(in, charset);
-        return getXStream().fromXML(reader);
+        return getXStream(objectTypeName).fromXML(reader);
     }
 
     @Override
-    protected byte[] serializeToByteArray(final Object deserializedObject) throws Exception {
+    protected byte[] serializeToByteArray(final Object objectToBeSerialized) throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final OutputStreamWriter writer = new OutputStreamWriter(out, charset);
-        getXStream().toXML(deserializedObject, writer);
+        getXStream(objectToBeSerialized).toXML(objectToBeSerialized, writer);
         return out.toByteArray();
     }
 
-    private XStream getXStream() {
-        final StaxDriver staxDriver = new StaxDriver() {
+    private XStream getXStream(final String objectTypeName) throws Exception {
+    	
+    	final Class<?> objectClass = ReflectUtil.getClassLoader().loadClass(objectTypeName);
+    	
+    	return getXStream(objectClass);
+    	
+    }
+    
+    private XStream getXStream(final Object objectToBeSerialized) {
+    	
+    	return getXStream(objectToBeSerialized.getClass());
+    	
+    }
+    
+    private XStream getXStream(final Class<?> objectClass) {
+        
+    	final StaxDriver staxDriver = new StaxDriver() {
             @Override
             public StaxWriter createStaxWriter(final XMLStreamWriter out) throws XMLStreamException {
                 // the boolean parameter controls the production of XML
@@ -100,7 +119,11 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
         result.setMode(XStream.ID_REFERENCES); // no xpath, just ids
         result.setClassLoader(ReflectUtil.getClassLoader()); // use isolated
                                                              // class loader
+        if (processAnnotations) {
+        	result.processAnnotations(objectClass);
+        }
         return result;
+        
     }
 
 }

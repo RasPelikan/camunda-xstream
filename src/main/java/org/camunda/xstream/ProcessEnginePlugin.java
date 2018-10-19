@@ -11,6 +11,8 @@ import org.camunda.xstream.bpm.engine.impl.variable.serializer.XStreamObjectSeri
 public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
 
     private String encoding = "UTF-8";
+    
+    private boolean processAnnotations = false;
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -20,7 +22,8 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
         if (customPreVariableSerializers != null) {
             newPreVariableSerializers.addAll(customPreVariableSerializers);
         }
-        newPreVariableSerializers.add(new XStreamObjectSerializer(encoding));
+        newPreVariableSerializers.add(
+        		new XStreamObjectSerializer(encoding, processAnnotations));
         processEngineConfiguration.setCustomPreVariableSerializers(newPreVariableSerializers);
     }
 
@@ -34,6 +37,14 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
 
     public String getEncoding() {
         return encoding;
+    }
+    
+    public void setProcessAnnotations(final String processAnnotations) {
+    	if (processAnnotations != null) {
+    		this.processAnnotations = Boolean.parseBoolean(processAnnotations);
+    	} else {
+    		this.processAnnotations = false;
+    	}
     }
 
 }
