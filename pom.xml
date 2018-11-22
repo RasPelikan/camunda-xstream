@@ -2,19 +2,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.camunda</groupId>
 	<artifactId>camunda-xstream</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.2</version>
 	<name>XStream Serializer for Camunda</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<camunda.version>7.2.0</camunda.version>
 		<java.version>1.6</java.version>
-		<xstream.version>1.4.9</xstream.version>
+		<xstream.version>1.4.10</xstream.version>
 	</properties>
 
 	<scm>
 		<developerConnection>scm:git:https://github.com/RasPelikan/camunda-xstream.git</developerConnection>
-	  <tag>camunda-xstream-1.0.0</tag>
+	  <tag>camunda-xstream-1.0.2</tag>
   </scm>
 
 	<dependencies>
@@ -54,6 +54,13 @@
 			<artifactId>mockito-core</artifactId>
 			<version>1.10.19</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.camunda.bpm.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter</artifactId>
+			<version>2.3.0</version>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>
