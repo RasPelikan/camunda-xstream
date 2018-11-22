@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.camunda</groupId>
 	<artifactId>camunda-xstream</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<name>XStream Serializer for Camunda</name>
 
 	<properties>
@@ -14,7 +14,7 @@
 
 	<scm>
 		<developerConnection>scm:git:https://github.com/RasPelikan/camunda-xstream.git</developerConnection>
-	  <tag>camunda-xstream-1.0.2</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<dependencies>
