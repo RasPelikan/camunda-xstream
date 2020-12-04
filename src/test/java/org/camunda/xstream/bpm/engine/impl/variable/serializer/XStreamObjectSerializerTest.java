@@ -3,12 +3,17 @@ package org.camunda.xstream.bpm.engine.impl.variable.serializer;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+
 public class XStreamObjectSerializerTest {
 	
 	@Test
 	public void testSerialization() throws Exception {
 	
-		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8", false);
+		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8", new LinkedList<String>(), new LinkedList<String>(){{
+			add(TestClass.class.getTypeName());
+		}},false);
 		
 		final TestClass test1 = new TestClass();
 		test1.setIdentifier("4711");
@@ -16,8 +21,8 @@ public class XStreamObjectSerializerTest {
 		final byte[] serialized1 = serializer.serializeToByteArray(test1);
 
 		Assert.assertNotNull(serialized1);
-		Assert.assertFalse(new String(serialized1, "UTF-8").indexOf(TestClass.SHORTCUT) != -1);
-		Assert.assertTrue(new String(serialized1, "UTF-8").indexOf(TestClass.class.getName()) != -1);
+		Assert.assertFalse(new String(serialized1, StandardCharsets.UTF_8).contains(TestClass.SHORTCUT));
+		Assert.assertTrue(new String(serialized1, StandardCharsets.UTF_8).contains(TestClass.class.getName()));
 		
 		final Object result1 = serializer.deserializeFromByteArray(serialized1, TestClass.class.getName());
 		
@@ -48,7 +53,9 @@ public class XStreamObjectSerializerTest {
 	@Test
 	public void testSerializationWithAnnotation() throws Exception {
 	
-		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8", true);
+		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8",  new LinkedList<String>(), new LinkedList<String>(){{
+			add(TestClass.class.getTypeName());
+		}},true);
 		
 		final TestClass test1 = new TestClass();
 		test1.setIdentifier("4711");
@@ -56,8 +63,8 @@ public class XStreamObjectSerializerTest {
 		final byte[] serialized1 = serializer.serializeToByteArray(test1);
 
 		Assert.assertNotNull(serialized1);
-		Assert.assertTrue(new String(serialized1, "UTF-8").indexOf(TestClass.SHORTCUT) != -1);
-		Assert.assertFalse(new String(serialized1, "UTF-8").indexOf(TestClass.class.getName()) != -1);
+		Assert.assertTrue(new String(serialized1, StandardCharsets.UTF_8).contains(TestClass.SHORTCUT));
+		Assert.assertFalse(new String(serialized1, StandardCharsets.UTF_8).contains(TestClass.class.getName()));
 
 		final Object result1 = serializer.deserializeFromByteArray(serialized1, TestClass.class.getName());
 		
