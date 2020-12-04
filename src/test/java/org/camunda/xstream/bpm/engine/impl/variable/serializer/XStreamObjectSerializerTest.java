@@ -1,5 +1,6 @@
 package org.camunda.xstream.bpm.engine.impl.variable.serializer;
 
+import org.camunda.xstream.bpm.engine.impl.variable.serializer.classes.TestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,9 +12,10 @@ public class XStreamObjectSerializerTest {
 	@Test
 	public void testSerialization() throws Exception {
 	
-		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8", new LinkedList<String>(), new LinkedList<String>(){{
+		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8", new LinkedList<>(), new LinkedList<String>(){{
 			add(TestClass.class.getTypeName());
-		}},false);
+		}},false,
+				false);
 		
 		final TestClass test1 = new TestClass();
 		test1.setIdentifier("4711");
@@ -53,9 +55,10 @@ public class XStreamObjectSerializerTest {
 	@Test
 	public void testSerializationWithAnnotation() throws Exception {
 	
-		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8",  new LinkedList<String>(), new LinkedList<String>(){{
+		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8",  new LinkedList<>(), new LinkedList<String>(){{
 			add(TestClass.class.getTypeName());
-		}},true);
+		}},true,
+				false);
 		
 		final TestClass test1 = new TestClass();
 		test1.setIdentifier("4711");

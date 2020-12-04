@@ -15,6 +15,8 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
 
     private boolean processAnnotations = false;
 
+    private boolean ignoreUnknownElements = false;
+
     private List<String> converters = new LinkedList<String>();
 
     private List<String> allowedTypes = new LinkedList<String>();
@@ -37,8 +39,10 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
             newPreVariableSerializers.addAll(customPreVariableSerializers);
         }
         newPreVariableSerializers.add(
-        		new XStreamObjectSerializer(encoding, converters, allowedTypes, processAnnotations));
+        		new XStreamObjectSerializer(encoding, converters, allowedTypes, processAnnotations, ignoreUnknownElements));
         processEngineConfiguration.setCustomPreVariableSerializers(newPreVariableSerializers);
+
+        System.out.println(((XStreamObjectSerializer) newPreVariableSerializers.get(newPreVariableSerializers.size()-1)).log());
     }
 
     public void setEncoding(final String encoding) {
@@ -70,11 +74,19 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
     }
 
     public void setProcessAnnotations(final String processAnnotations) {
-    	if (processAnnotations != null) {
-    		this.processAnnotations = Boolean.parseBoolean(processAnnotations);
-    	} else {
-    		this.processAnnotations = false;
-    	}
+        if (processAnnotations != null) {
+            this.processAnnotations = Boolean.parseBoolean(processAnnotations);
+        } else {
+            this.processAnnotations = false;
+        }
+    }
+
+    public void setIgnoreUnknownElements(final String ignoreUnknownElements) {
+        if (ignoreUnknownElements != null) {
+            this.ignoreUnknownElements = Boolean.parseBoolean(ignoreUnknownElements);
+        } else {
+            this.ignoreUnknownElements = false;
+        }
     }
 
 }

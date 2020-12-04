@@ -23,25 +23,38 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
     public static final String NAME = "xstream";
     public static final String DATAFORMAT = "application/xstream";
-    public static final String PROCESS_ANNOTATIONS = "processAnnotations";
 
     private final Charset charset;
 
-    private List<String> converters;
+    private final List<String> converters;
 
-    private List<String> allowedTypes;
+    private final List<String> allowedTypes;
 
     private final boolean processAnnotations;
+
+    private final boolean ignoreUnknownElements;
 
     public XStreamObjectSerializer(final String encoding,
                                    final List<String> converters,
                                    final List<String> allowedTypes,
-                                   final boolean processAnnotations) {
+                                   final boolean processAnnotations,
+                                   final boolean ignoreUnknownElements
+                                   ) {
         super(DATAFORMAT);
         this.charset = Charset.forName(encoding);
         this.processAnnotations = processAnnotations;
         this.converters = converters;
         this.allowedTypes = allowedTypes;
+        this.ignoreUnknownElements = ignoreUnknownElements;
+    }
+
+    public String log() {
+        return "XStreamObjectSerializer configured | " +
+                "charset=" + charset +
+                ", converters=" + converters +
+                ", allowedTypes=" + allowedTypes +
+                ", processAnnotations=" + processAnnotations +
+                ", ignoreUnknownElements=" + ignoreUnknownElements;
     }
 
     @Override
@@ -133,7 +146,10 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
         if (processAnnotations) {
         	result.processAnnotations(objectClass);
         }
-        result.ignoreUnknownElements();
+
+        if ( ignoreUnknownElements )
+            result.ignoreUnknownElements();
+
         registerConverters(result);
         setupSecurity(result);
         return result;

@@ -1,4 +1,4 @@
-package org.camunda.xstream.bpm.engine.impl.variable.serializer;
+package org.camunda.xstream.bpm.engine.impl.variable.serializer.classes;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

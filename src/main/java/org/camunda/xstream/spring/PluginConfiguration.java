@@ -15,6 +15,10 @@ public class PluginConfiguration {
 	@Value("${encoding:UTF-8}")
 	private String encoding;
 
+	private boolean processAnnotations = false;
+
+	private boolean ignoreUnknownElements = true;
+
 	private List<String> allowedTypes;
 
 	private List<String> converters;
@@ -33,6 +37,17 @@ public class PluginConfiguration {
 		if (converters != null) {
 			plugin.setConverters(String.join(",", converters));
 		}
+
+		if (processAnnotations)
+			plugin.setProcessAnnotations("true");
+		else
+			plugin.setConverters("false");
+
+		if (ignoreUnknownElements)
+			plugin.setIgnoreUnknownElements("true");
+		else
+			plugin.setIgnoreUnknownElements("false");
+
 		return plugin;
 		
 	}
@@ -43,6 +58,14 @@ public class PluginConfiguration {
 	
 	public void setConverters(List<String> converters) {
 		this.converters = converters;
+	}
+
+	public void setProcessAnnotations(Boolean b) {
+		this.processAnnotations = b;
+	}
+
+	public void setIgnoreUnknownElements(Boolean b) {
+		this.ignoreUnknownElements = b;
 	}
 	
 }
