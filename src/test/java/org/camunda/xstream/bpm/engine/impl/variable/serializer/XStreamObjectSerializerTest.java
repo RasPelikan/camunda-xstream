@@ -15,6 +15,7 @@ public class XStreamObjectSerializerTest {
 		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8", new LinkedList<>(), new LinkedList<String>(){{
 			add(TestClass.class.getTypeName());
 		}},false,
+				false,
 				false);
 		
 		final TestClass test1 = new TestClass();
@@ -58,6 +59,7 @@ public class XStreamObjectSerializerTest {
 		final XStreamObjectSerializer serializer = new XStreamObjectSerializer("UTF-8",  new LinkedList<>(), new LinkedList<String>(){{
 			add(TestClass.class.getTypeName());
 		}},true,
+				false,
 				false);
 		
 		final TestClass test1 = new TestClass();

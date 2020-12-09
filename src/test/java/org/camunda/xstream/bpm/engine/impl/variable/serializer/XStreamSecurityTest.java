@@ -17,6 +17,7 @@ public class XStreamSecurityTest {
                         new LinkedList<>(),
                         new LinkedList<>(),
                         false,
+                        false,
                         false);
 
         final TestClass testClass = new TestClass();
@@ -32,6 +33,7 @@ public class XStreamSecurityTest {
                         new LinkedList<String>(){{
                             add(TestClass.class.getTypeName());
                         }},
+                        false,
                         false,
                         false);
 

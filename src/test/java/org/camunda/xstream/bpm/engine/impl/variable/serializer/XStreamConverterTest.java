@@ -19,6 +19,7 @@ public class XStreamConverterTest {
                         new LinkedList<String>(){{
                             add(TestClass.class.getTypeName());
                         }},false,
+                        false,
                         false);
 
         final TestClass test1 = new TestClass();
@@ -41,6 +42,7 @@ public class XStreamConverterTest {
                         new LinkedList<String>(){{
                             add(TestClass.class.getTypeName());
                         }},false,
+                        false,
                         false);
 
         final TestClass test1 = new TestClass();

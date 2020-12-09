@@ -17,6 +17,8 @@ public class PluginConfiguration {
 
 	private boolean processAnnotations = false;
 
+	private boolean useExternalClassProvider = false;
+
 	private boolean ignoreUnknownElements = true;
 
 	private List<String> allowedTypes;
@@ -37,16 +39,22 @@ public class PluginConfiguration {
 		if (converters != null) {
 			plugin.setConverters(String.join(",", converters));
 		}
-
-		if (processAnnotations)
+		if (processAnnotations) {
 			plugin.setProcessAnnotations("true");
-		else
+		} else {
 			plugin.setConverters("false");
-
-		if (ignoreUnknownElements)
+		}
+		if (ignoreUnknownElements) {
 			plugin.setIgnoreUnknownElements("true");
-		else
+		} else {
 			plugin.setIgnoreUnknownElements("false");
+		}
+		if (useExternalClassProvider) {
+			plugin.setUseExternalClassProvider("true");
+		} else {
+			plugin.setUseExternalClassProvider("false");
+		}
+
 
 		return plugin;
 		
@@ -67,5 +75,8 @@ public class PluginConfiguration {
 	public void setIgnoreUnknownElements(Boolean b) {
 		this.ignoreUnknownElements = b;
 	}
-	
+
+	public void setuseExternalClassProvider(Boolean b) {
+		this.useExternalClassProvider = b;
+	}
 }

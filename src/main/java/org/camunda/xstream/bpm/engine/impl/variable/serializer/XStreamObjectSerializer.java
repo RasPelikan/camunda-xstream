@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
@@ -34,11 +36,16 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
     private final boolean ignoreUnknownElements;
 
+    private final boolean useExternalClassProvider;
+
+    private XStream xStream;
+
     public XStreamObjectSerializer(final String encoding,
                                    final List<String> converters,
                                    final List<String> allowedTypes,
                                    final boolean processAnnotations,
-                                   final boolean ignoreUnknownElements
+                                   final boolean ignoreUnknownElements,
+                                   final boolean useExternalClassProvider
                                    ) {
         super(DATAFORMAT);
         this.charset = Charset.forName(encoding);
@@ -46,6 +53,7 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
         this.converters = converters;
         this.allowedTypes = allowedTypes;
         this.ignoreUnknownElements = ignoreUnknownElements;
+        this.useExternalClassProvider = useExternalClassProvider;
     }
 
     public String log() {
@@ -130,8 +138,28 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
     }
 
     private XStream getXStream(final Class<?> objectClass) {
+        if (xStream != null) {
+            if (processAnnotations) {
+                xStream.processAnnotations(objectClass);
+            }
+            return xStream;
+        }
 
-    	final StaxDriver staxDriver = new StaxDriver() {
+        createXStream();
+
+        if (processAnnotations) {
+            xStream.processAnnotations(objectClass);
+        }
+
+        if (useExternalClassProvider) {
+            ingestExternalAnnotations(xStream, objectClass);
+        }
+
+        return xStream;
+    }
+
+    private void createXStream(){
+        final StaxDriver staxDriver = new StaxDriver() {
             @Override
             public StaxWriter createStaxWriter(final XMLStreamWriter out) throws XMLStreamException {
                 // the boolean parameter controls the production of XML
@@ -139,23 +167,28 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
                 return createStaxWriter(out, false);
             }
         };
-        XStream result = new XStream(staxDriver);
-        result.setMode(XStream.ID_REFERENCES); // no xpath, just ids
-        result.setClassLoader(ReflectUtil.getClassLoader()); // use isolated
-                                                             // class loader
-        if (processAnnotations) {
-        	result.processAnnotations(objectClass);
+
+        xStream = new XStream(staxDriver);
+        xStream.setMode(XStream.ID_REFERENCES); // no xpath, just ids
+        xStream.setClassLoader(ReflectUtil.getClassLoader()); // use isolated
+        // class loader
+
+        if ( ignoreUnknownElements ) {
+            xStream.ignoreUnknownElements();
         }
-
-        if ( ignoreUnknownElements )
-            result.ignoreUnknownElements();
-
-        registerConverters(result);
-        setupSecurity(result);
-        return result;
+        registerConverters(xStream);
+        setupSecurity(xStream);
     }
 
-	private void setupSecurity(final XStream result) {
+    private void ingestExternalAnnotations(XStream xs, final Object classToSerialize) {
+        try {
+            URL classProviderClass = classToSerialize.getClass().getClassLoader().getResource("META-INF/services/org.camunda.xstream.ClassProvider");
+            Class<?>[] classes = (Class<?>[]) classToSerialize.getClass().getClassLoader().loadClass(String.valueOf(classProviderClass)).getMethod("getAnnotatedClasses").invoke(null);
+            xs.processAnnotations(classes);
+        } catch (Exception ignored) {}
+    }
+
+    private void setupSecurity(final XStream result) {
 		XStream.setupDefaultSecurity(result);
         for (final String allowedType : allowedTypes) {
         	final String trimmedAllowedType = allowedType.trim();

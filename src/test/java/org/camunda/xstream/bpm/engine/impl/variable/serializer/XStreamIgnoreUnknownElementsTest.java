@@ -16,12 +16,19 @@ public class XStreamIgnoreUnknownElementsTest {
                 new LinkedList<String>(){{
                     add(TestClass.class.getTypeName());
                     add(NotRelatedTestClass.class.getTypeName());
-                }}, true, false);
+                }}, true, false,
+                false);
+        XStreamObjectSerializer s2 = new XStreamObjectSerializer("UTF-8", new LinkedList<>(),
+                new LinkedList<String>(){{
+                    add(TestClass.class.getTypeName());
+                    add(NotRelatedTestClass.class.getTypeName());
+                }}, true, false,
+                false);
 
         TestClass t1 = new TestClass();
         t1.setIdentifier("123");
 
-        Assert.assertThrows(AbstractReflectionConverter.UnknownFieldException.class, () -> s1.deserializeFromByteArray(s1.serializeToByteArray(t1), NotRelatedTestClass.class.getName()));
+        Assert.assertThrows(AbstractReflectionConverter.UnknownFieldException.class, () -> s2.deserializeFromByteArray(s1.serializeToByteArray(t1), NotRelatedTestClass.class.getName()));
     }
 
     @Test
@@ -30,7 +37,8 @@ public class XStreamIgnoreUnknownElementsTest {
                 new LinkedList<String>(){{
                     add(TestClass.class.getTypeName());
                     add(NotRelatedTestClass.class.getTypeName());
-                }}, true, true);
+                }}, true, true,
+                false);
 
         TestClass t1 = new TestClass();
         t1.setIdentifier("123");

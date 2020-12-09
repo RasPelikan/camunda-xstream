@@ -17,6 +17,8 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
 
     private boolean ignoreUnknownElements = false;
 
+    private boolean useExternalClassProvider = false;
+
     private List<String> converters = new LinkedList<String>();
 
     private List<String> allowedTypes = new LinkedList<String>();
@@ -39,7 +41,7 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
             newPreVariableSerializers.addAll(customPreVariableSerializers);
         }
         newPreVariableSerializers.add(
-        		new XStreamObjectSerializer(encoding, converters, allowedTypes, processAnnotations, ignoreUnknownElements));
+        		new XStreamObjectSerializer(encoding, converters, allowedTypes, processAnnotations, ignoreUnknownElements, useExternalClassProvider));
         processEngineConfiguration.setCustomPreVariableSerializers(newPreVariableSerializers);
 
         System.out.println(((XStreamObjectSerializer) newPreVariableSerializers.get(newPreVariableSerializers.size()-1)).log());
@@ -86,6 +88,14 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
             this.ignoreUnknownElements = Boolean.parseBoolean(ignoreUnknownElements);
         } else {
             this.ignoreUnknownElements = false;
+        }
+    }
+
+    public void setUseExternalClassProvider(final String useExternalClassProvider) {
+        if (useExternalClassProvider != null) {
+            this.useExternalClassProvider = Boolean.parseBoolean(useExternalClassProvider);
+        } else {
+            this.useExternalClassProvider = false;
         }
     }
 

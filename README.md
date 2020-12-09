@@ -25,7 +25,10 @@ Plugin-Configuration
                 true
             </property>
             <property name="ignoreUnknownElements">
-            true
+                true
+            </property>
+            <property name="useExternalClassProvider">
+                true
             </property>
             <property name="allowedTypes">
                 my.project.**,
@@ -153,3 +156,40 @@ It is possible to register additional converters by naming their classes using t
 ```
 
 For converters available see [XStream Documentation](http://x-stream.github.io/converters.html).
+
+External Class Provider
+-----------------------
+
+In order to lookup xStream Annotations in your project, [org.atteo.classindex](https://github.com/atteo/classindex) can be used to index all annotated Classes during compilation.
+
+First create a custom annotation processor by extending ClassIndexProcessor 
+
+```java
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.atteo.classindex.processor.ClassIndexProcessor;
+
+public class XStreamAnnotatedClassIndexProcessor extends ClassIndexProcessor {
+    public XStreamAnnotatedClassIndexProcessor() {
+        indexAnnotations(XStreamAlias.class);
+    }
+}
+```
+
+Then create a ClassProvider 
+
+```java
+public class ClassProviderImpl {
+    public Class<?>[] getAnnotatedClasses() {
+        Set<Class<?>> ret = new HashSet<>((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAlias.class));
+
+        return (Class<?>[]) ret.toArray();
+
+    }
+}
+```
+
+Finally 
+ - register the processor by creating the file `META-INF/services/javax.annotation.processing.Processor` in your classpath with the full class name of your processor
+ - register the ClassProvider by creating the file `META-INF/services/org.camunda.xstream.ClassProvider` in your classpath with the full class name of your processor
