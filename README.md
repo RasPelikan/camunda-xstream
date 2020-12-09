@@ -24,6 +24,9 @@ Plugin-Configuration
             <property name="processAnnotations">
                 true
             </property>
+            <property name="ignoreUnknownElements">
+            true
+            </property>
             <property name="allowedTypes">
                 my.project.**,
                 other.project.**
