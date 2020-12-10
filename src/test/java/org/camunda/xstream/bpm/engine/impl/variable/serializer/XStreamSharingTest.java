@@ -24,7 +24,7 @@ public class XStreamSharingTest {
         final byte[] serialized = s1.serializeToByteArray(testObject);
         final Object newObject = s1.deserializeFromByteArray(serialized, TestClass.class.getName());
 		Assert.assertNotNull(newObject);
-		System.err.println(ClassProvider.counter);
+
         Assert.assertTrue(ClassProvider.counter == 1);
         
 	}
