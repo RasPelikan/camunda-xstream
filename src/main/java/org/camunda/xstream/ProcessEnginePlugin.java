@@ -1,5 +1,6 @@
 package org.camunda.xstream;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,12 @@ import org.camunda.xstream.bpm.engine.impl.variable.serializer.XStreamObjectSeri
 public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
 
     private String encoding = "UTF-8";
+
+    private boolean processAnnotations = false;
+
+    private boolean ignoreUnknownElements = false;
+
+    private boolean useExternalClassProvider = false;
 
     private List<String> converters = new LinkedList<String>();
 
@@ -27,15 +34,14 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
         			+ "Have a look at https://github.com/RasPelikan/camunda-xstream/blob/master/README.md "
         			+ "how to do so.");
         }
-    	
+
         final List<TypedValueSerializer> customPreVariableSerializers = processEngineConfiguration.getCustomPreVariableSerializers();
         final List<TypedValueSerializer> newPreVariableSerializers = new LinkedList<TypedValueSerializer>();
         if (customPreVariableSerializers != null) {
             newPreVariableSerializers.addAll(customPreVariableSerializers);
         }
         newPreVariableSerializers.add(
-        		new XStreamObjectSerializer(
-        				encoding, converters, allowedTypes));
+        		new XStreamObjectSerializer(encoding, converters, allowedTypes, ignoreUnknownElements, useExternalClassProvider));
         processEngineConfiguration.setCustomPreVariableSerializers(newPreVariableSerializers);
     }
 
@@ -46,7 +52,7 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
             this.encoding = null;
         }
     }
-    
+
     // Used by wildfly plugin configuration
     public void setAllowedTypes(String allowedTypes) {
     	if (allowedTypes == null) {
@@ -54,11 +60,9 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
     		return;
     	}
     	final String[] allowedTypesArray = allowedTypes.split(",");
-    	for (int i = 0; i < allowedTypesArray.length; ++i) {
-    		this.allowedTypes.add(allowedTypesArray[i]);
-    	}
+        this.allowedTypes.addAll(Arrays.asList(allowedTypesArray));
     }
-    
+
     // Used by wildfly plugin configuration
     public void setConverters(String converters) {
     	if (converters == null) {
@@ -66,9 +70,31 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
     		return;
     	}
     	final String[] convertersArray = converters.split(",");
-    	for (int i = 0; i < convertersArray.length; ++i) {
-    		this.converters.add(convertersArray[i]);
-    	}
+        this.converters.addAll(Arrays.asList(convertersArray));
+    }
+
+    public void setProcessAnnotations(final String processAnnotations) {
+        if (processAnnotations != null) {
+            this.processAnnotations = Boolean.parseBoolean(processAnnotations);
+        } else {
+            this.processAnnotations = false;
+        }
+    }
+
+    public void setIgnoreUnknownElements(final String ignoreUnknownElements) {
+        if (ignoreUnknownElements != null) {
+            this.ignoreUnknownElements = Boolean.parseBoolean(ignoreUnknownElements);
+        } else {
+            this.ignoreUnknownElements = false;
+        }
+    }
+
+    public void setUseExternalClassProvider(final String useExternalClassProvider) {
+        if (useExternalClassProvider != null) {
+            this.useExternalClassProvider = Boolean.parseBoolean(useExternalClassProvider);
+        } else {
+            this.useExternalClassProvider = false;
+        }
     }
 
 }

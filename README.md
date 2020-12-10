@@ -21,6 +21,15 @@ Plugin-Configuration
             <property name="encoding">
                 UTF-8
             </property>
+            <property name="processAnnotations">
+                true
+            </property>
+            <property name="ignoreUnknownElements">
+                true
+            </property>
+            <property name="useExternalClassProvider">
+                true
+            </property>
             <property name="allowedTypes">
                 my.project.**,
                 other.project.**
@@ -31,10 +40,12 @@ Plugin-Configuration
 </process-engine>
 ```
 
-The XStream serialization can be choosen as default serialization by defining the property "defaultSerializationFormat" as shown. If doing so the serialization is done under the hood. Otherwise
+The XStream serialization can be chosen as default serialization by defining the property "defaultSerializationFormat" as shown. If doing so the serialization is done under the hood. Otherwise
 XStream serialization might be used as shown in the [Camunda Documentation](https://docs.camunda.org/manual/7.4/user-guide/process-engine/variables/#object-value-serialization).
 
-The plugin propperty "encoding" is optional (default: UTF-8) and specifies the encoding used for XML serialization.
+The plugin property "encoding" is optional (default: UTF-8) and specifies the encoding used for XML serialization.
+
+Also the plugin property "processAnnotations" is optional (default: false) which defines whether XStream annotations should be processed (see http://x-stream.github.io/annotations-tutorial.html).
 
 Serializing values
 ------------------
@@ -145,3 +156,43 @@ It is possible to register additional converters by naming their classes using t
 ```
 
 For converters available see [XStream Documentation](http://x-stream.github.io/converters.html).
+
+External Class Provider
+-----------------------
+
+In order to lookup xStream Annotations in your project, [org.atteo.classindex](https://github.com/atteo/classindex) can be used to index all annotated Classes during compilation.
+
+First create a custom annotation processor by extending ClassIndexProcessor 
+
+```java
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.atteo.classindex.processor.ClassIndexProcessor;
+
+public class XStreamAnnotatedClassIndexProcessor extends ClassIndexProcessor {
+    public XStreamAnnotatedClassIndexProcessor() {
+        indexAnnotations(XStreamAlias.class);
+        indexAnnotations(XStreamAliasType.class);
+        indexAnnotations(XStreamAsAttribute.class);
+    }
+}
+```
+
+Then create a ClassProvider having a public, static method "getAnnotatedClasses": 
+
+```java
+public class ClassProviderImpl {
+    public static Set<Class<?>> getAnnotatedClasses() {
+        Set<Class<?>> ret = new HashSet<>();
+        ClassIndex.getAnnotated(XStreamAlias.class).forEach(ret::add);
+        ClassIndex.getAnnotated(XStreamAliasType.class).forEach(ret::add);
+        ClassIndex.getAnnotated(XStreamAsAttribute.class).forEach(ret::add);
+        return ret;
+    }
+}
+```
+
+Finally 
+ - register the processor by creating the file `META-INF/services/javax.annotation.processing.Processor` in your classpath with the full class name of your processor
+ - register the ClassProvider by creating the file `META-INF/services/org.camunda.xstream.ClassProvider` in your classpath with the full class name of your processor
