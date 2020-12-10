@@ -1,11 +1,11 @@
 package org.camunda.xstream.bpm.engine.impl.variable.serializer;
 
+import java.util.LinkedList;
+
 import org.camunda.xstream.bpm.engine.impl.variable.serializer.classes.TestClass;
 import org.camunda.xstream.bpm.engine.impl.variable.serializer.classes.TestClassConverter;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.LinkedList;
 
 public class XStreamConverterTest {
 
@@ -18,7 +18,7 @@ public class XStreamConverterTest {
                         }},
                         new LinkedList<String>(){{
                             add(TestClass.class.getTypeName());
-                        }},false,
+                        }},
                         false,
                         false);
 
@@ -41,7 +41,7 @@ public class XStreamConverterTest {
                         new LinkedList<>(),
                         new LinkedList<String>(){{
                             add(TestClass.class.getTypeName());
-                        }},false,
+                        }},
                         false,
                         false);
 

@@ -2,11 +2,11 @@ package org.camunda.xstream.bpm.engine.impl.variable.serializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.io.xml.StaxWriter;
 
 public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
+	public static final String CLASSPROVIDER = "org.camunda.xstream.ClassProvider";
     public static final String NAME = "xstream";
     public static final String DATAFORMAT = "application/xstream";
 
@@ -32,24 +33,20 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
     private final List<String> allowedTypes;
 
-    private final boolean processAnnotations;
-
     private final boolean ignoreUnknownElements;
 
     private final boolean useExternalClassProvider;
 
-    private XStream xStream;
+    // private Map<ClassLoader, XStream> xStream = new HashMap<>();
 
     public XStreamObjectSerializer(final String encoding,
                                    final List<String> converters,
                                    final List<String> allowedTypes,
-                                   final boolean processAnnotations,
                                    final boolean ignoreUnknownElements,
                                    final boolean useExternalClassProvider
                                    ) {
         super(DATAFORMAT);
         this.charset = Charset.forName(encoding);
-        this.processAnnotations = processAnnotations;
         this.converters = converters;
         this.allowedTypes = allowedTypes;
         this.ignoreUnknownElements = ignoreUnknownElements;
@@ -61,7 +58,6 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
                 "charset=" + charset +
                 ", converters=" + converters +
                 ", allowedTypes=" + allowedTypes +
-                ", processAnnotations=" + processAnnotations +
                 ", ignoreUnknownElements=" + ignoreUnknownElements;
     }
 
@@ -112,53 +108,20 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
     protected Object deserializeFromByteArray(final byte[] object, final String objectTypeName) throws Exception {
         final ByteArrayInputStream in = new ByteArrayInputStream(object);
         final InputStreamReader reader = new InputStreamReader(in, charset);
-        return getXStream(objectTypeName).fromXML(reader);
+        // parameter "objectTypeName" is ignored to support refactoring of classes
+        return getXStream().fromXML(reader);
     }
 
     @Override
     protected byte[] serializeToByteArray(final Object objectToBeSerialized) throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final OutputStreamWriter writer = new OutputStreamWriter(out, charset);
-        getXStream(objectToBeSerialized).toXML(objectToBeSerialized, writer);
+        getXStream().toXML(objectToBeSerialized, writer);
         return out.toByteArray();
     }
 
-    private XStream getXStream(final String objectTypeName) throws Exception {
+    private XStream getXStream() {
 
-    	final Class<?> objectClass = ReflectUtil.getClassLoader().loadClass(objectTypeName);
-
-    	return getXStream(objectClass);
-
-    }
-
-    private XStream getXStream(final Object objectToBeSerialized) {
-
-    	return getXStream(objectToBeSerialized.getClass());
-
-    }
-
-    private XStream getXStream(final Class<?> objectClass) {
-        if (xStream != null) {
-            if (processAnnotations) {
-                xStream.processAnnotations(objectClass);
-            }
-            return xStream;
-        }
-
-        createXStream();
-
-        if (processAnnotations) {
-            xStream.processAnnotations(objectClass);
-        }
-
-        if (useExternalClassProvider) {
-            ingestExternalAnnotations(xStream, objectClass);
-        }
-
-        return xStream;
-    }
-
-    private void createXStream(){
         final StaxDriver staxDriver = new StaxDriver() {
             @Override
             public StaxWriter createStaxWriter(final XMLStreamWriter out) throws XMLStreamException {
@@ -168,24 +131,59 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
             }
         };
 
-        xStream = new XStream(staxDriver);
+        final XStream xStream = new XStream(staxDriver);
         xStream.setMode(XStream.ID_REFERENCES); // no xpath, just ids
-        xStream.setClassLoader(ReflectUtil.getClassLoader()); // use isolated
-        // class loader
+        xStream.setClassLoader(ReflectUtil.getClassLoader()); // use isolated class loader
 
         if ( ignoreUnknownElements ) {
             xStream.ignoreUnknownElements();
         }
+        if (useExternalClassProvider) {
+            ingestExternalAnnotations(xStream);
+        }
         registerConverters(xStream);
         setupSecurity(xStream);
+        
+        return xStream;
+        
     }
 
-    private void ingestExternalAnnotations(XStream xs, final Object classToSerialize) {
+    private void ingestExternalAnnotations(XStream xs) {
+    	InputStream in = null;
         try {
-            URL classProviderClass = classToSerialize.getClass().getClassLoader().getResource("META-INF/services/org.camunda.xstream.ClassProvider");
-            Class<?>[] classes = (Class<?>[]) classToSerialize.getClass().getClassLoader().loadClass(String.valueOf(classProviderClass)).getMethod("getAnnotatedClasses").invoke(null);
-            xs.processAnnotations(classes);
-        } catch (Exception ignored) {}
+        	in = ReflectUtil
+        			.getClassLoader()
+        			.getResourceAsStream("META-INF/services/" + CLASSPROVIDER);
+        	if (in == null) {
+        		return;
+        	}
+        	final ByteArrayOutputStream content = new ByteArrayOutputStream();
+        	int read = -1;
+        	while ((read = in.read()) != -1) {
+        		content.write(read);
+        	}
+        	final String classProviderClass = new String(content.toByteArray());
+        	@SuppressWarnings("unchecked")
+			final Collection<Class<?>> classes = (Collection<Class<?>>) ReflectUtil
+        			.getClassLoader()
+        			.loadClass(String.valueOf(classProviderClass))
+        			.getMethod("getAnnotatedClasses")
+        			.invoke(null);
+        	final Class<?>[] arrayOfClasses = classes.toArray(new Class[0]);
+            xs.processAnnotations(arrayOfClasses);
+        } catch (RuntimeException e) {
+        	throw e;
+        } catch (Exception e) {
+        	throw new RuntimeException("Could not ingest external annotations", e);
+        } finally {
+        	if (in != null) {
+        		try {
+        			in.close();
+        		} catch (Exception e) {
+        			// suppress
+        		}
+        	}
+        }
     }
 
     private void setupSecurity(final XStream result) {

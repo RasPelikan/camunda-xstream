@@ -179,15 +179,15 @@ public class XStreamAnnotatedClassIndexProcessor extends ClassIndexProcessor {
 }
 ```
 
-Then create a ClassProvider 
+Then create a ClassProvider having a public, static method "getAnnotatedClasses": 
 
 ```java
 public class ClassProviderImpl {
-    public Set<Class<?>> getAnnotatedClasses() {
+    public static Set<Class<?>> getAnnotatedClasses() {
         Set<Class<?>> ret = new HashSet<>();
-        ret.addAll((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAlias.class));
-        ret.addAll((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAliasType.class));
-        ret.addAll((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAsAttribute.class));
+        ClassIndex.getAnnotated(XStreamAlias.class).forEach(ret::add);
+        ClassIndex.getAnnotated(XStreamAliasType.class).forEach(ret::add);
+        ClassIndex.getAnnotated(XStreamAsAttribute.class).forEach(ret::add);
         return ret;
     }
 }

@@ -1,11 +1,12 @@
 package org.camunda.xstream.bpm.engine.impl.variable.serializer;
 
-import com.thoughtworks.xstream.security.ForbiddenClassException;
+import java.util.LinkedList;
+
 import org.camunda.xstream.bpm.engine.impl.variable.serializer.classes.TestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.LinkedList;
+import com.thoughtworks.xstream.security.ForbiddenClassException;
 
 public class XStreamSecurityTest {
 
@@ -16,7 +17,6 @@ public class XStreamSecurityTest {
                 new XStreamObjectSerializer("UTF-8",
                         new LinkedList<>(),
                         new LinkedList<>(),
-                        false,
                         false,
                         false);
 
@@ -33,7 +33,6 @@ public class XStreamSecurityTest {
                         new LinkedList<String>(){{
                             add(TestClass.class.getTypeName());
                         }},
-                        false,
                         false,
                         false);
 

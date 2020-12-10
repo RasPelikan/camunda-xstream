@@ -41,7 +41,7 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
             newPreVariableSerializers.addAll(customPreVariableSerializers);
         }
         newPreVariableSerializers.add(
-        		new XStreamObjectSerializer(encoding, converters, allowedTypes, processAnnotations, ignoreUnknownElements, useExternalClassProvider));
+        		new XStreamObjectSerializer(encoding, converters, allowedTypes, ignoreUnknownElements, useExternalClassProvider));
         processEngineConfiguration.setCustomPreVariableSerializers(newPreVariableSerializers);
     }
 
