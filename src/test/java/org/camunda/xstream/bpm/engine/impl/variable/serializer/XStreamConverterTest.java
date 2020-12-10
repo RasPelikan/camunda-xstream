@@ -30,7 +30,7 @@ public class XStreamConverterTest {
         test2.setParent(test1);
 
         final TestClass remarshalledTest2 = (TestClass) serializer.deserializeFromByteArray(serializer.serializeToByteArray(test2), TestClass.class.getName());
-        System.out.println(new String(serializer.serializeToByteArray(test2)));
+//        System.out.println(new String(serializer.serializeToByteArray(test2)));
         Assert.assertNull(remarshalledTest2.getParent());
     }
 
@@ -53,7 +53,7 @@ public class XStreamConverterTest {
         test2.setParent(test1);
 
         final TestClass remarshalledTest2 = (TestClass) serializer.deserializeFromByteArray(serializer.serializeToByteArray(test2), TestClass.class.getName());
-        System.out.println(new String(serializer.serializeToByteArray(test2)));
+//        System.out.println(new String(serializer.serializeToByteArray(test2)));
         Assert.assertEquals(test2.getParent().getIdentifier(), remarshalledTest2.getParent().getIdentifier());
     }
 }

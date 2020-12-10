@@ -173,6 +173,8 @@ import org.atteo.classindex.processor.ClassIndexProcessor;
 public class XStreamAnnotatedClassIndexProcessor extends ClassIndexProcessor {
     public XStreamAnnotatedClassIndexProcessor() {
         indexAnnotations(XStreamAlias.class);
+        indexAnnotations(XStreamAliasType.class);
+        indexAnnotations(XStreamAsAttribute.class);
     }
 }
 ```
@@ -181,11 +183,12 @@ Then create a ClassProvider
 
 ```java
 public class ClassProviderImpl {
-    public Class<?>[] getAnnotatedClasses() {
-        Set<Class<?>> ret = new HashSet<>((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAlias.class));
-
-        return (Class<?>[]) ret.toArray();
-
+    public Set<Class<?>> getAnnotatedClasses() {
+        Set<Class<?>> ret = new HashSet<>();
+        ret.addAll((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAlias.class));
+        ret.addAll((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAliasType.class));
+        ret.addAll((Collection<? extends Class<?>>) ClassIndex.getAnnotated(XStreamAsAttribute.class));
+        return ret;
     }
 }
 ```
