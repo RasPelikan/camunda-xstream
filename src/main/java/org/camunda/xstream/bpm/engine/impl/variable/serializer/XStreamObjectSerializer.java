@@ -126,6 +126,7 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
     	
     	final ClassLoader classLoader = ReflectUtil.getClassLoader();
     	XStream sharedXStream = xStream.get(classLoader);
+    	System.out.println("shared: " + sharedXStream);
     	if (sharedXStream == null) {
     		synchronized (xStream) {
     			sharedXStream = createXStream(classLoader);

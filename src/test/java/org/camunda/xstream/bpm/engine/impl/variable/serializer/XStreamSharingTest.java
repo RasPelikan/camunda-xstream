@@ -12,6 +12,8 @@ public class XStreamSharingTest {
 	@Test
 	public void testSharing() throws Exception {
 		
+		ClassProvider.counter = 0;
+		
         XStreamObjectSerializer s1 = new XStreamObjectSerializer("UTF-8", new LinkedList<>(),
                 new LinkedList<String>(){{
                     add(TestClass.class.getTypeName());
