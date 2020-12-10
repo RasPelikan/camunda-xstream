@@ -8,7 +8,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -37,7 +39,7 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
     private final boolean useExternalClassProvider;
 
-    // private Map<ClassLoader, XStream> xStream = new HashMap<>();
+    private Map<ClassLoader, XStream> xStream = new HashMap<>();
 
     public XStreamObjectSerializer(final String encoding,
                                    final List<String> converters,
@@ -121,7 +123,21 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
     }
 
     private XStream getXStream() {
+    	
+    	final ClassLoader classLoader = ReflectUtil.getClassLoader();
+    	XStream sharedXStream = xStream.get(classLoader);
+    	if (sharedXStream == null) {
+    		synchronized (xStream) {
+    			sharedXStream = createXStream(classLoader);
+    			xStream.put(classLoader, sharedXStream);
+    		}
+    	}
+    	return sharedXStream;
 
+    }
+
+    private XStream createXStream(ClassLoader classLoader) {
+    	
         final StaxDriver staxDriver = new StaxDriver() {
             @Override
             public StaxWriter createStaxWriter(final XMLStreamWriter out) throws XMLStreamException {
@@ -133,7 +149,7 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
 
         final XStream xStream = new XStream(staxDriver);
         xStream.setMode(XStream.ID_REFERENCES); // no xpath, just ids
-        xStream.setClassLoader(ReflectUtil.getClassLoader()); // use isolated class loader
+        xStream.setClassLoader(classLoader); // use isolated class loader
 
         if ( ignoreUnknownElements ) {
             xStream.ignoreUnknownElements();
