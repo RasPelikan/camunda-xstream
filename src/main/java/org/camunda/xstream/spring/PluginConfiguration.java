@@ -15,8 +15,6 @@ public class PluginConfiguration {
 	@Value("${encoding:UTF-8}")
 	private String encoding;
 
-	private boolean processAnnotations = false;
-
 	private boolean useExternalClassProvider = false;
 
 	private boolean ignoreUnknownElements = true;
@@ -39,11 +37,6 @@ public class PluginConfiguration {
 		if (converters != null) {
 			plugin.setConverters(String.join(",", converters));
 		}
-		if (processAnnotations) {
-			plugin.setProcessAnnotations("true");
-		} else {
-			plugin.setConverters("false");
-		}
 		if (ignoreUnknownElements) {
 			plugin.setIgnoreUnknownElements("true");
 		} else {
@@ -54,8 +47,6 @@ public class PluginConfiguration {
 		} else {
 			plugin.setUseExternalClassProvider("false");
 		}
-
-
 		return plugin;
 		
 	}
@@ -68,15 +59,12 @@ public class PluginConfiguration {
 		this.converters = converters;
 	}
 
-	public void setProcessAnnotations(Boolean b) {
-		this.processAnnotations = b;
+	public void setIgnoreUnknownElements(Boolean ignoreUnknownElements) {
+		this.ignoreUnknownElements = ignoreUnknownElements;
 	}
 
-	public void setIgnoreUnknownElements(Boolean b) {
-		this.ignoreUnknownElements = b;
+	public void setuseExternalClassProvider(Boolean ignoreUnknownElements) {
+		this.useExternalClassProvider = ignoreUnknownElements;
 	}
-
-	public void setuseExternalClassProvider(Boolean b) {
-		this.useExternalClassProvider = b;
-	}
+	
 }

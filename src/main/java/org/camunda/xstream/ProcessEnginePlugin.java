@@ -13,8 +13,6 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
 
     private String encoding = "UTF-8";
 
-    private boolean processAnnotations = false;
-
     private boolean ignoreUnknownElements = false;
 
     private boolean useExternalClassProvider = false;
@@ -71,14 +69,6 @@ public class ProcessEnginePlugin extends AbstractProcessEnginePlugin {
     	}
     	final String[] convertersArray = converters.split(",");
         this.converters.addAll(Arrays.asList(convertersArray));
-    }
-
-    public void setProcessAnnotations(final String processAnnotations) {
-        if (processAnnotations != null) {
-            this.processAnnotations = Boolean.parseBoolean(processAnnotations);
-        } else {
-            this.processAnnotations = false;
-        }
     }
 
     public void setIgnoreUnknownElements(final String ignoreUnknownElements) {

@@ -21,9 +21,6 @@ Plugin-Configuration
             <property name="encoding">
                 UTF-8
             </property>
-            <property name="processAnnotations">
-                true
-            </property>
             <property name="ignoreUnknownElements">
                 true
             </property>
@@ -44,8 +41,6 @@ The XStream serialization can be chosen as default serialization by defining the
 XStream serialization might be used as shown in the [Camunda Documentation](https://docs.camunda.org/manual/7.4/user-guide/process-engine/variables/#object-value-serialization).
 
 The plugin property "encoding" is optional (default: UTF-8) and specifies the encoding used for XML serialization.
-
-Also the plugin property "processAnnotations" is optional (default: false) which defines whether XStream annotations should be processed (see http://x-stream.github.io/annotations-tutorial.html).
 
 Serializing values
 ------------------
@@ -160,7 +155,7 @@ For converters available see [XStream Documentation](http://x-stream.github.io/c
 External Class Provider
 -----------------------
 
-In order to lookup xStream Annotations in your project, [org.atteo.classindex](https://github.com/atteo/classindex) can be used to index all annotated Classes during compilation.
+In order to lookup xStream annotations in your project, [org.atteo.classindex](https://github.com/atteo/classindex) can be used to index all annotated Classes during compilation.
 
 First create a custom annotation processor by extending ClassIndexProcessor 
 
