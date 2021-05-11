@@ -59,12 +59,12 @@ public class PluginConfiguration {
 		this.converters = converters;
 	}
 
-	public void setIgnoreUnknownElements(Boolean ignoreUnknownElements) {
+    public void setIgnoreUnknownElements(boolean ignoreUnknownElements) {
 		this.ignoreUnknownElements = ignoreUnknownElements;
 	}
 
-	public void setuseExternalClassProvider(Boolean ignoreUnknownElements) {
-		this.useExternalClassProvider = ignoreUnknownElements;
+    public void setUseExternalClassProvider(boolean useExternalClassProvider) {
+        this.useExternalClassProvider = useExternalClassProvider;
 	}
 	
 }
