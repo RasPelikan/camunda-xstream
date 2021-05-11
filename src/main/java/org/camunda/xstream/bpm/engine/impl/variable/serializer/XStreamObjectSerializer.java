@@ -165,11 +165,9 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
     }
 
     private void ingestExternalAnnotations(XStream xs) {
-    	InputStream in = null;
-        try {
-        	in = ReflectUtil
-        			.getClassLoader()
-        			.getResourceAsStream("META-INF/services/" + CLASSPROVIDER);
+        try (InputStream in = ReflectUtil
+                .getClassLoader()
+                .getResourceAsStream("META-INF/services/" + CLASSPROVIDER)) {
         	if (in == null) {
         		return;
         	}
@@ -191,14 +189,6 @@ public class XStreamObjectSerializer extends AbstractObjectValueSerializer {
         	throw e;
         } catch (Exception e) {
         	throw new RuntimeException("Could not ingest external annotations", e);
-        } finally {
-        	if (in != null) {
-        		try {
-        			in.close();
-        		} catch (Exception e) {
-        			// suppress
-        		}
-        	}
         }
     }
 

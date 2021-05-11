@@ -1,0 +1,4 @@
+camunda:
+  xstream-serialization:
+    allowedTypes:
+      - at.test.**
